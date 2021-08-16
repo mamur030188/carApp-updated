@@ -1,7 +1,14 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { RESTDataSource } = require('apollo-datasource-rest')
+const express = require('express')
 const db = require('./db.json')
 
-
+class CarDataAPI extends RESTDataSource {
+    async getCar () {
+        const data = await this.get('http://localhost:5000/carData')
+        return data
+    }
+}
 
 // create the schema . buildSchema replaces with "gql"
 const schema = gql(`
@@ -20,6 +27,7 @@ const schema = gql(`
     type Query {
         carsByType(type:CarTypes!): [Car]
         carsById(id: ID!): Car
+        carsByAPI: Car
     }
     type Mutation {
         insertCar(brand: String!, color: String!, doors: Int!, type: CarTypes!): [Car]!
@@ -34,13 +42,16 @@ const resolvers = {
         },
         carsById: (parent, args, context, info) => {
             return context.db.cars.filter(car => car.id === args.id) [0]
+        },
+        carsByAPI: async (parent, args, context, info) => {
+            return await context.dataSources.CarDataAPI.getCar()
         }
     },
-    Car: {
-        brand: (parent, args, context, info) => {
-            return db.cars.filter(car => car.brand === parent.brand) [0].brand
-        }
-    },
+    // Car: {
+    //     brand: (parent, args, context, info) => {
+    //         return db.cars.filter(car => car.brand === parent.brand) [0].brand
+    //     }
+    // },
     Mutation: {
         insertCar: (_, { brand, color, doors, type }) => {
             context.db.cars.push({
@@ -66,6 +77,11 @@ const dbConnection = () => {
 const server = new ApolloServer({
     typeDefs: schema,
     resolvers,
+    dataSources: () => {
+        return {
+            CarDataAPI: new CarDataAPI()
+        }
+    },
     context: async () => {
         return{ db: await dbConnection() }
     } 
@@ -77,15 +93,19 @@ server.listen().then(({ url }) => {
 
 
 
+// RESTDataSource 
+const app = express()
 
-// const app = express()
+app.get('/carData', function (req, res){
+  res.send({
+      id: 'd',
+      brand: 'Toyota',
+      color: 'Red',
+      doors: 4,
+      type: 'Coupe'
+    
+  })  
+})
 
-// app.use('/graphql', graphqlHTTP({
-//     schema: schema,
-//     rootValue: resolvers(),
-//     graphiql: true
-// }))
+app.listen(5000)
 
-// app.listen(3000)
-
-// console.log('GraphQL server is listening on PORT 3000')
