@@ -1,0 +1,39 @@
+{
+    "cars": [
+        {
+            "id": "a",
+            "brand": "Ford",
+            "color": "Blue",
+            "doors": "4",
+            "type": "Sedan"
+        },
+        {
+            "id": "b",
+            "brand": "Tesla",
+            "color": "Red",
+            "doors": "4",
+            "type": "SUV"
+        },
+        {
+            "id": "c",
+            "brand": "Toyota",
+            "color": "White",
+            "doors": "2",
+            "type": "Coupe"
+        },
+        {
+            "id": "d",
+            "brand": "Toyota",
+            "color": "Red",
+            "doors": "4",
+            "type": "Coupe"
+        },
+        {
+            "id": "0.08539867491489583",
+            "brand": "Cobalt",
+            "color": "White",
+            "doors": "4",
+            "type": "Sedan"
+        }
+    ]
+}
